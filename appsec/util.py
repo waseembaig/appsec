@@ -25,12 +25,10 @@ class adaptor:
     
 
     def invoke(self, method, **args):
+        method = self._ext+"_"+method
         method = self.get_method(method)
-        func = getattr(self._obj, method)
-        payload = {}
-        payload["force"] = "True"
-        payload["filePath"] = args["config_file"]
-        responce = func(payload)
+        func = getattr(self, method)
+        responce = func(args)
         print (responce)
     
     def bps_load(self, args):
@@ -38,6 +36,7 @@ class adaptor:
         #bpt_filename_to_import = args
         #pp(self._obj.testmodel.importModel(importAsTestName, bpt_filename_to_import, True))
         return(self._obj.testmodel.load(template=args))
+
 
     def bps_add_ports(self, port_list, group):
         for port in port_list:
@@ -85,6 +84,15 @@ class adaptor:
     
     def bps_disconnect(self):
         return(self._obj.testmodel.logout())
+
+    def bps_delete_report(self, type , limit):
+        status = ["passed", "failed", "error", "canceled"]
+        for state in status:
+            data = self._obj.reports.search(searchString=state, limit=limit, sort=type, sortorder="ascending")
+            if data:
+                for item in data:
+                    self._obj.reports.delete(runid = item['runid'])
+        
 
     def get_method(self, name):
         if self._ext == "bps":

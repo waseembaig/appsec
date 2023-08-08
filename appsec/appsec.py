@@ -16,7 +16,6 @@ class appsec:
     
     def load(self, config_file):
         try:
-            # self._adaptor.invoke("load", config_file=config_file)
             self._adaptor.bps_load(config_file)
         except Exception as err:
             return err
@@ -80,6 +79,13 @@ class appsec:
     def disconnect(self):
         try:
             self._adaptor.bps_disconnect()
+        except Exception as err:
+            return err
+        return 
+    
+    def delete_report(self, type, limit=100):
+        try:
+            self._adaptor.bps_delete_report(type, limit)
         except Exception as err:
             return err
         return 
